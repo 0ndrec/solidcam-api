@@ -1,6 +1,6 @@
 # solidcam-api
 
-A fully-typed Python middleware library for the **SolidCAM Automation COM API** (`scautom.dll`).
+A fully-typed Python library for the **SolidCAM Automation COM API** (`scautom.dll`).
 
 `solidcam-api` wraps every section of the SolidCAM Automation API — General, CAD, CAM, Machine,
 Part, Operation, Tool, Geometry, and Templates — in a clean, Pythonic interface with:
