@@ -36,7 +36,7 @@ class PartSection(_SectionBase):
         :class:`pathlib.Path` in any mixed-in namespace.
 
         Returns:
-            Absolute path to the open ``.cmp`` file as a plain string.
+            Absolute path to the open ``.prz`` file as a plain string.
         """
         return str(self._com.Path)
 
@@ -105,14 +105,14 @@ class PartSection(_SectionBase):
     ) -> None:
         """Create a new SolidCAM part and save it at the given path.
 
-        Programmatically creates a ``.cmp`` part file with the specified
+        Programmatically creates a ``.prz`` project file with the specified
         configuration. The active CAD document in the host application is used
         as the reference model for the new part.
 
         Args:
             name: Display name for the new CAM part as it will appear in the
                 SolidCAM part tree.
-            path: Absolute directory path where the new ``.cmp`` file should
+            path: Absolute directory path where the new ``.prz`` file should
                 be saved. The filename is derived from *name*.
             part_type: Machining type of the new part. Pass a
                 :class:`~solidcam_api.enums.NewPartType` member or a raw

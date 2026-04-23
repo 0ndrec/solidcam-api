@@ -16,24 +16,24 @@ def test_open_calls_com_open_with_part_path_and_default_model_path(
     connected_client: SolidCAMClient, fake_com: MagicMock
 ) -> None:
     fake_com.Open.return_value = 1
-    connected_client.open("part.sldprt")
-    fake_com.Open.assert_called_once_with("part.sldprt", "")
+    connected_client.open("part.prz")
+    fake_com.Open.assert_called_once_with("part.prz", "")
 
 
 def test_open_calls_com_open_with_explicit_model_path(
     connected_client: SolidCAMClient, fake_com: MagicMock
 ) -> None:
     fake_com.Open.return_value = 1
-    connected_client.open("part.sldprt", "model.sldprt")
-    fake_com.Open.assert_called_once_with("part.sldprt", "model.sldprt")
+    connected_client.open("part.prz", "model.sldprt")
+    fake_com.Open.assert_called_once_with("part.prz", "model.sldprt")
 
 
 def test_open_empty_model_path_is_forwarded_to_com(
     connected_client: SolidCAMClient, fake_com: MagicMock
 ) -> None:
     fake_com.Open.return_value = 1
-    connected_client.open("part.sldprt", "")
-    fake_com.Open.assert_called_once_with("part.sldprt", "")
+    connected_client.open("part.prz", "")
+    fake_com.Open.assert_called_once_with("part.prz", "")
 
 
 def test_open_raises_api_error_when_com_returns_zero(
@@ -41,7 +41,7 @@ def test_open_raises_api_error_when_com_returns_zero(
 ) -> None:
     fake_com.Open.return_value = 0
     with pytest.raises(SolidCAMAPIError):
-        connected_client.open("part.sldprt")
+        connected_client.open("part.prz")
 
 
 def test_open_raises_api_error_when_com_returns_none(
@@ -49,7 +49,7 @@ def test_open_raises_api_error_when_com_returns_none(
 ) -> None:
     fake_com.Open.return_value = None
     with pytest.raises(SolidCAMAPIError):
-        connected_client.open("part.sldprt")
+        connected_client.open("part.prz")
 
 
 def test_open_raises_api_error_when_com_returns_false(
@@ -57,7 +57,7 @@ def test_open_raises_api_error_when_com_returns_false(
 ) -> None:
     fake_com.Open.return_value = False
     with pytest.raises(SolidCAMAPIError):
-        connected_client.open("part.sldprt")
+        connected_client.open("part.prz")
 
 
 def test_open_error_includes_method_name(
@@ -65,7 +65,7 @@ def test_open_error_includes_method_name(
 ) -> None:
     fake_com.Open.return_value = 0
     with pytest.raises(SolidCAMAPIError) as exc_info:
-        connected_client.open("part.sldprt")
+        connected_client.open("part.prz")
     assert exc_info.value.method == "Open"
 
 
@@ -73,7 +73,7 @@ def test_open_does_not_raise_when_com_returns_truthy(
     connected_client: SolidCAMClient, fake_com: MagicMock
 ) -> None:
     fake_com.Open.return_value = 1
-    connected_client.open("part.sldprt")  # must not raise
+    connected_client.open("part.prz")  # must not raise
 
 
 def test_open_error_code_comes_from_last_error(
@@ -83,7 +83,7 @@ def test_open_error_code_comes_from_last_error(
     fake_com.LastError = 99
     fake_com.LastErrorDescription = "file not found"
     with pytest.raises(SolidCAMAPIError) as exc_info:
-        connected_client.open("part.sldprt")
+        connected_client.open("part.prz")
     assert exc_info.value.code == 99
     assert exc_info.value.description == "file not found"
 
@@ -204,7 +204,7 @@ def test_generate_gcode_raises_api_error_when_last_error_nonzero(
 def test_save_calls_com_save_with_folder(
     connected_client: SolidCAMClient, fake_com: MagicMock
 ) -> None:
-    fake_com.Save.return_value = r"C:\out\part.cmp"
+    fake_com.Save.return_value = r"C:\out\part.prz"
     connected_client.save(r"C:\out")
     fake_com.Save.assert_called_once_with(r"C:\out")
 
@@ -212,13 +212,13 @@ def test_save_calls_com_save_with_folder(
 def test_save_returns_string_result_from_com(
     connected_client: SolidCAMClient, fake_com: MagicMock
 ) -> None:
-    fake_com.Save.return_value = r"C:\out\part.cmp"
+    fake_com.Save.return_value = r"C:\out\part.prz"
     result = connected_client.save(r"C:\out")
-    assert result == r"C:\out\part.cmp"
+    assert result == r"C:\out\part.prz"
 
 
 def test_save_returns_str_type(connected_client: SolidCAMClient, fake_com: MagicMock) -> None:
-    fake_com.Save.return_value = r"C:\out\part.cmp"
+    fake_com.Save.return_value = r"C:\out\part.prz"
     result = connected_client.save(r"C:\out")
     assert isinstance(result, str)
 
@@ -251,7 +251,7 @@ def test_save_error_includes_method_name(
 def test_save_does_not_raise_when_com_returns_truthy_path(
     connected_client: SolidCAMClient, fake_com: MagicMock
 ) -> None:
-    fake_com.Save.return_value = r"C:\result\part.cmp"
+    fake_com.Save.return_value = r"C:\result\part.prz"
     connected_client.save(r"C:\result")  # must not raise
 
 

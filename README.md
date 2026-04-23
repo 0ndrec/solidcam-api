@@ -82,7 +82,7 @@ from solidcam_api import SolidCAMClient
 
 with SolidCAMClient() as sc:
     sc.start_application(r"C:\Program Files\SolidWorks\SLDWORKS.exe")
-    sc.open(r"C:\CAM\my_part.sldprt")
+    sc.open(r"C:\CAM\my_part.prz")
     sc.calculate()
     sc.generate_gcode()
     sc.close()
@@ -102,10 +102,10 @@ with SolidCAMClient() as sc:
     sc.start_application(r"C:\Program Files\SolidWorks\SLDWORKS.exe")
 
     # Open a CAM part (no reference-model replacement)
-    sc.open(r"D:\jobs\bracket.sldprt")
+    sc.open(r"D:\jobs\bracket.prz")
 
     # Check current part info
-    print(sc.part_path)       # D:\jobs\bracket.sldprt
+    print(sc.part_path)       # D:\jobs\bracket.prz
     print(sc.part_type)       # PartType.MILLING
     print(sc.reference_model) # D:\cad\bracket_v3.sldprt
 
@@ -128,7 +128,7 @@ from solidcam_api import SolidCAMClient
 
 with SolidCAMClient() as sc:
     sc.start_application(r"C:\Program Files\SolidWorks\SLDWORKS.exe")
-    sc.open(r"D:\jobs\bracket.sldprt")
+    sc.open(r"D:\jobs\bracket.prz")
 
     # Swap in the new revision of the CAD model
     sc.change_reference_model(r"D:\cad\bracket_v4.sldprt")
@@ -146,7 +146,7 @@ from solidcam_api import SolidCAMClient
 
 with SolidCAMClient() as sc:
     sc.start_application(r"C:\Program Files\SolidWorks\SLDWORKS.exe")
-    sc.open(r"D:\jobs\bracket.sldprt")
+    sc.open(r"D:\jobs\bracket.prz")
 
     # --- Machines ---
     print(f"Available machines ({sc.machine_count}):")
@@ -178,7 +178,7 @@ from solidcam_api import SolidCAMClient, StockDefineBy, TargetDefineBy
 
 with SolidCAMClient() as sc:
     sc.start_application(r"C:\Program Files\SolidWorks\SLDWORKS.exe")
-    sc.open(r"D:\jobs\new_part.sldprt")
+    sc.open(r"D:\jobs\new_part.prz")
 
     # Create a box stock with 2 mm offsets on every face
     sc.create_stock_box(
@@ -220,7 +220,7 @@ from solidcam_api import SolidCAMClient
 
 with SolidCAMClient() as sc:
     sc.start_application(r"C:\Program Files\SolidWorks\SLDWORKS.exe")
-    sc.open(r"D:\jobs\new_part.sldprt")
+    sc.open(r"D:\jobs\new_part.prz")
 
     # List available process templates
     for pt in sc.list_process_templates():
@@ -245,7 +245,7 @@ from solidcam_api import SolidCAMClient
 
 with SolidCAMClient() as sc:
     sc.start_application(r"C:\Program Files\SolidWorks\SLDWORKS.exe")
-    sc.open(r"D:\jobs\bracket.sldprt")
+    sc.open(r"D:\jobs\bracket.prz")
 
     # Discover available templates
     print(sc.list_tool_sheet_names())
@@ -410,7 +410,7 @@ from solidcam_api import SolidCAMClient, SolidCAMAPIError, SolidCAMConnectionErr
 try:
     with SolidCAMClient() as sc:
         sc.start_application(r"C:\Program Files\SolidWorks\SLDWORKS.exe")
-        sc.open(r"D:\jobs\bracket.sldprt")
+        sc.open(r"D:\jobs\bracket.prz")
         sc.calculate()
         sc.generate_gcode()
         sc.close()
@@ -453,10 +453,10 @@ def test_calculate_called_after_open():
     sc = SolidCAMClient(com_object=fake_com)
     assert sc.is_connected
 
-    sc.open(r"C:\parts\test.sldprt")
+    sc.open(r"C:\parts\test.prz")
     sc.calculate()
 
-    fake_com.Open.assert_called_once_with(r"C:\parts\test.sldprt", "")
+    fake_com.Open.assert_called_once_with(r"C:\parts\test.prz", "")
     fake_com.Calculate.assert_called_once_with(False)
 ```
 

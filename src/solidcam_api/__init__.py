@@ -14,7 +14,7 @@ Typical usage
 
     with SolidCAMClient() as sc:
         sc.start_application(r"C:\\Program Files\\SolidWorks\\SLDWORKS.exe")
-        sc.open(r"C:\\parts\\my_part.sldprt")
+        sc.open(r"C:\\parts\\my_part.prz")
         sc.synchronize()
         sc.calculate()
         sc.generate_gcode()

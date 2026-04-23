@@ -29,13 +29,13 @@ class CAMSection(_SectionBase):
     def open(self, part_path: str, model_path: str = "") -> None:
         """Open a SolidCAM part file, optionally replacing its reference model.
 
-        Loads the ``.cmp`` part at *part_path* into SolidCAM. When *model_path*
+        Loads the ``.prz`` project at *part_path* into SolidCAM. When *model_path*
         is supplied, the part's reference CAD model is replaced with that file
         before the part is opened, which is useful for automated model-swap
         workflows.
 
         Args:
-            part_path: Absolute path to the SolidCAM part file (``.cmp``).
+            part_path: Absolute path to the SolidCAM project file (``.prz``).
             model_path: Absolute path to a replacement CAD model file.
                 Pass an empty string (the default) to keep the existing
                 reference model.
@@ -202,7 +202,7 @@ class CAMSection(_SectionBase):
         """Save the open part to *folder* and return the resulting file path.
 
         SolidCAM derives the filename from the part name and writes the
-        ``.cmp`` file into *folder*. The full path of the saved file is
+        ``.prz`` file into *folder*. The full path of the saved file is
         returned so that callers can record or forward the location without
         having to reconstruct it.
 
@@ -211,7 +211,7 @@ class CAMSection(_SectionBase):
                 saved.
 
         Returns:
-            Full absolute path to the saved ``.cmp`` file.
+            Full absolute path to the saved ``.prz`` file.
 
         Raises:
             SolidCAMAPIError: When the COM call returns a falsy result,
@@ -229,7 +229,7 @@ class CAMSection(_SectionBase):
         location.
 
         Args:
-            path: Absolute destination path for the saved ``.cmp`` file,
+            path: Absolute destination path for the saved ``.prz`` file,
                 including the filename and extension.
 
         Raises:
@@ -250,7 +250,7 @@ class CAMSection(_SectionBase):
             folder: Absolute path to the root destination directory.
 
         Returns:
-            Full absolute path to the saved ``.cmp`` file.
+            Full absolute path to the saved ``.prz`` file.
 
         Raises:
             SolidCAMAPIError: When the COM call returns a falsy result,
