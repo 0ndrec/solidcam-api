@@ -10,6 +10,7 @@ class Machine:
     Attributes:
         index: Zero-based index of the machine in the machines list.
         name:  Display name of the machine as reported by the COM API.
+
     """
 
     index: int

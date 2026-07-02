@@ -36,6 +36,7 @@ class TemplateSection(_SectionBase):
         Returns:
             Non-negative integer count of operation template entries reported
             by the COM API.
+
         """
         return int(self._com.TemplateCount)
 
@@ -48,6 +49,7 @@ class TemplateSection(_SectionBase):
 
         Returns:
             Display name of the operation template as reported by the COM API.
+
         """
         return str(self._com.GetTemplateName(index))
 
@@ -61,6 +63,7 @@ class TemplateSection(_SectionBase):
         Returns:
             :class:`~solidcam_api.models.TemplateEntry` with ``index`` and
             ``name`` populated.
+
         """
         return TemplateEntry(index=index, name=self.get_template_name(index))
 
@@ -70,6 +73,7 @@ class TemplateSection(_SectionBase):
         Returns:
             Ordered list of :class:`~solidcam_api.models.TemplateEntry`
             instances sorted by their zero-based index.
+
         """
         return [self.get_template(i) for i in range(self.template_count)]
 
@@ -100,6 +104,7 @@ class TemplateSection(_SectionBase):
         Raises:
             :class:`~solidcam_api.exceptions.SolidCAMAPIError`: When the COM
                 API reports a non-zero ``LastError`` after the call.
+
         """
         self._com.CreateJobFromTemplate(
             template_name,
@@ -124,6 +129,7 @@ class TemplateSection(_SectionBase):
         Returns:
             Non-negative integer count of process template entries reported
             by the COM API.
+
         """
         return int(self._com.ProcessTemplateCount)
 
@@ -136,6 +142,7 @@ class TemplateSection(_SectionBase):
 
         Returns:
             Display name of the process template as reported by the COM API.
+
         """
         return str(self._com.GetProcessTemplateName(index))
 
@@ -149,6 +156,7 @@ class TemplateSection(_SectionBase):
         Returns:
             :class:`~solidcam_api.models.ProcessTemplateEntry` with ``index``
             and ``name`` populated.
+
         """
         return ProcessTemplateEntry(
             index=index,
@@ -161,10 +169,9 @@ class TemplateSection(_SectionBase):
         Returns:
             Ordered list of :class:`~solidcam_api.models.ProcessTemplateEntry`
             instances sorted by their zero-based index.
+
         """
-        return [
-            self.get_process_template(i) for i in range(self.process_template_count)
-        ]
+        return [self.get_process_template(i) for i in range(self.process_template_count)]
 
     def create_jobs_from_process_template(
         self,
@@ -195,6 +202,7 @@ class TemplateSection(_SectionBase):
         Raises:
             :class:`~solidcam_api.exceptions.SolidCAMAPIError`: When the COM
                 API reports a non-zero ``LastError`` after the call.
+
         """
         self._com.CreateJobsFromProcessTemplate(
             process_template_name,

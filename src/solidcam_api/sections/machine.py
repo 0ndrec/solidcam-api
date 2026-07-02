@@ -34,6 +34,7 @@ class MachineSection(_SectionBase):
 
         Returns:
             Non-negative integer count of available machines.
+
         """
         return int(self._com.MachineCount)
 
@@ -43,6 +44,7 @@ class MachineSection(_SectionBase):
 
         Returns:
             Name string of the active machine as reported by the COM API.
+
         """
         return str(self._com.CurrentMachineName)
 
@@ -59,6 +61,7 @@ class MachineSection(_SectionBase):
 
         Returns:
             Zero-based index of the active machine in the machine database.
+
         """
         return int(self._com.CurrentMachine)
 
@@ -69,6 +72,7 @@ class MachineSection(_SectionBase):
         Args:
             value: Zero-based index of the machine to activate. Must be in the
                 range ``[0, machine_count - 1]``.
+
         """
         self._com.CurrentMachine = value
 
@@ -85,6 +89,7 @@ class MachineSection(_SectionBase):
 
         Returns:
             Display name of the machine as reported by the COM API.
+
         """
         return str(self._com.GetMachineName(index))
 
@@ -99,8 +104,6 @@ class MachineSection(_SectionBase):
         Returns:
             Ordered list of :class:`~solidcam_api.models.Machine` instances,
             one per registered machine, sorted by their zero-based index.
+
         """
-        return [
-            Machine(index=i, name=self.get_machine_name(i))
-            for i in range(self.machine_count)
-        ]
+        return [Machine(index=i, name=self.get_machine_name(i)) for i in range(self.machine_count)]

@@ -4,11 +4,12 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-if TYPE_CHECKING:
-    pass
-
+from solidcam_api._paths import StrPath, as_str
 from solidcam_api.enums import HomeOriginPosition, NewPartType, PartType
 from solidcam_api.sections._base import _SectionBase
+
+if TYPE_CHECKING:
+    pass
 
 
 class PartSection(_SectionBase):
@@ -37,6 +38,7 @@ class PartSection(_SectionBase):
 
         Returns:
             Absolute path to the open ``.prz`` file as a plain string.
+
         """
         return str(self._com.Path)
 
@@ -53,6 +55,7 @@ class PartSection(_SectionBase):
         Returns:
             The matching :class:`~solidcam_api.enums.PartType` member, or the
             raw integer type code when the value is unknown.
+
         """
         raw = int(self._com.Type)
         try:
@@ -69,6 +72,7 @@ class PartSection(_SectionBase):
 
         Returns:
             Absolute path to the reference CAD model file as a plain string.
+
         """
         return str(self._com.ReferenceModel)
 
@@ -76,7 +80,7 @@ class PartSection(_SectionBase):
     # Methods
     # ------------------------------------------------------------------
 
-    def change_reference_model(self, model_path: str) -> None:
+    def change_reference_model(self, model_path: StrPath) -> None:
         """Replace the reference CAD model of the currently open part.
 
         Swaps the geometry source used by the open SolidCAM part to the
@@ -90,14 +94,15 @@ class PartSection(_SectionBase):
         Raises:
             SolidCAMAPIError: When the COM call returns a falsy result,
                 indicating that the reference model could not be changed.
+
         """
-        result = self._com.ChangeReferenceModel(model_path)
+        result = self._com.ChangeReferenceModel(as_str(model_path))
         self._require_result(result, "ChangeReferenceModel")
 
     def create_new_part(
         self,
         name: str,
-        path: str,
+        path: StrPath,
         part_type: NewPartType | int,
         machine_index: int,
         home_origin_position: HomeOriginPosition | int,
@@ -128,10 +133,11 @@ class PartSection(_SectionBase):
         Raises:
             SolidCAMAPIError: When the COM API reports a non-zero ``LastError``
                 after the call, indicating that the part could not be created.
+
         """
         self._com.CreateNewPart(
             name,
-            path,
+            as_str(path),
             int(part_type),
             machine_index,
             int(home_origin_position),

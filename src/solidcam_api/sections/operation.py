@@ -30,6 +30,7 @@ class OperationSection(_SectionBase):
         Returns:
             Non-negative integer count of operations in the part's operation
             tree.
+
         """
         return int(self._com.OperationCount)
 
@@ -43,6 +44,7 @@ class OperationSection(_SectionBase):
         Returns:
             Non-negative integer count of operations bearing an exclamation
             sign in the SolidCAM operation tree.
+
         """
         return int(self._com.NumberOfJobsOpenedWithExclamationSign)
 
@@ -60,6 +62,7 @@ class OperationSection(_SectionBase):
         Returns:
             Display name of the operation as shown in the SolidCAM operation
             tree.
+
         """
         return str(self._com.GetOperationName(index))
 
@@ -79,6 +82,7 @@ class OperationSection(_SectionBase):
 
         Returns:
             Raw integer operation-type code as returned by the COM API.
+
         """
         return int(self._com.GetOperationType(index))
 
@@ -96,6 +100,7 @@ class OperationSection(_SectionBase):
         Returns:
             :class:`~solidcam_api.models.Operation` instance with ``index``,
             ``name``, and ``type_code`` populated.
+
         """
         return Operation(
             index=index,
@@ -114,6 +119,7 @@ class OperationSection(_SectionBase):
             Ordered list of :class:`~solidcam_api.models.Operation` instances,
             one per operation in the part's operation tree, sorted by their
             zero-based index.
+
         """
         return [self.get_operation(i) for i in range(self.operation_count)]
 
@@ -136,6 +142,7 @@ class OperationSection(_SectionBase):
         Raises:
             SolidCAMAPIError: If the COM API reports a non-zero ``LastError``
                 after the call.
+
         """
         self._com.SuppressOperation(operation_name, suppress)
         self._raise_on_error("SuppressOperation")
@@ -156,6 +163,7 @@ class OperationSection(_SectionBase):
         Raises:
             SolidCAMAPIError: If the COM API reports a non-zero ``LastError``
                 after the call, indicating that code generation failed.
+
         """
         self._com.GenerateGCodeForOperation(operation_name, file_name)
         self._raise_on_error("GenerateGCodeForOperation")

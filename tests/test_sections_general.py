@@ -128,59 +128,35 @@ def test_log_file_round_trip(connected_client: SolidCAMClient, fake_com: MagicMo
 
 
 # ---------------------------------------------------------------------------
-# pid property — getter
+# pid property — getter (now returns int, read-only)
 # ---------------------------------------------------------------------------
 
 
-def test_pid_getter_returns_float(connected_client: SolidCAMClient, fake_com: MagicMock) -> None:
+def test_pid_getter_returns_int(connected_client: SolidCAMClient, fake_com: MagicMock) -> None:
     fake_com.pid = 1234
-    assert isinstance(connected_client.pid, float)
+    assert isinstance(connected_client.pid, int)
 
 
 def test_pid_getter_returns_correct_value(
     connected_client: SolidCAMClient, fake_com: MagicMock
 ) -> None:
     fake_com.pid = 5678
-    assert connected_client.pid == 5678.0
+    assert connected_client.pid == 5678
 
 
 def test_pid_getter_reflects_float_value(
     connected_client: SolidCAMClient, fake_com: MagicMock
 ) -> None:
     fake_com.pid = 1234.5
-    assert connected_client.pid == 1234.5
+    # Float is truncated to int
+    assert connected_client.pid == 1234
 
 
 def test_pid_getter_returns_zero_when_unset(
     connected_client: SolidCAMClient, fake_com: MagicMock
 ) -> None:
     fake_com.pid = 0
-    assert connected_client.pid == 0.0
-
-
-# ---------------------------------------------------------------------------
-# pid property — setter
-# ---------------------------------------------------------------------------
-
-
-def test_pid_setter_assigns_to_com_pid(
-    connected_client: SolidCAMClient, fake_com: MagicMock
-) -> None:
-    connected_client.pid = 1234
-    assert fake_com.pid == 1234
-
-
-def test_pid_setter_overwrites_previous_value(
-    connected_client: SolidCAMClient, fake_com: MagicMock
-) -> None:
-    connected_client.pid = 100
-    connected_client.pid = 200
-    assert fake_com.pid == 200
-
-
-def test_pid_setter_accepts_float(connected_client: SolidCAMClient, fake_com: MagicMock) -> None:
-    connected_client.pid = 9999.0
-    assert fake_com.pid == 9999.0
+    assert connected_client.pid == 0
 
 
 # ---------------------------------------------------------------------------
@@ -235,7 +211,7 @@ def test_start_application_calls_com_with_custom_wait(
     connected_client: SolidCAMClient, fake_com: MagicMock
 ) -> None:
     fake_com.StartApplication.return_value = 1
-    connected_client.start_application("C:\\app.exe", 5000)
+    connected_client.start_application("C:\\app.exe", wait_for_plugin=5000)
     fake_com.StartApplication.assert_called_once_with("C:\\app.exe", 5000)
 
 

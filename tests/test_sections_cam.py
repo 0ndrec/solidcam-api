@@ -1,6 +1,7 @@
 from __future__ import annotations
 
-from unittest.mock import MagicMock, call
+from pathlib import Path
+from unittest.mock import MagicMock
 
 import pytest
 
@@ -89,6 +90,28 @@ def test_open_error_code_comes_from_last_error(
 
 
 # ---------------------------------------------------------------------------
+# check_synchronization()
+# ---------------------------------------------------------------------------
+
+
+def test_check_synchronization_calls_com(
+    connected_client: SolidCAMClient, fake_com: MagicMock
+) -> None:
+    connected_client.check_synchronization()
+    fake_com.CheckSynchronization.assert_called_once_with()
+
+
+def test_check_synchronization_raises_on_error(
+    connected_client: SolidCAMClient, fake_com: MagicMock
+) -> None:
+    fake_com.LastError = 1
+    fake_com.LastErrorDescription = "not synced"
+    with pytest.raises(SolidCAMAPIError) as exc_info:
+        connected_client.check_synchronization()
+    assert exc_info.value.method == "CheckSynchronization"
+
+
+# ---------------------------------------------------------------------------
 # synchronize()
 # ---------------------------------------------------------------------------
 
@@ -169,6 +192,65 @@ def test_calculate_only_not_calculated_false_also_calls_with_false(
 
 
 # ---------------------------------------------------------------------------
+# calculate_operations()
+# ---------------------------------------------------------------------------
+
+
+def test_calculate_operations_calls_com(
+    connected_client: SolidCAMClient, fake_com: MagicMock
+) -> None:
+    connected_client.calculate_operations(["op1", "op2"])
+    fake_com.CalculateOperations.assert_called_once_with(["op1", "op2"], False)
+
+
+def test_calculate_operations_with_flag(
+    connected_client: SolidCAMClient, fake_com: MagicMock
+) -> None:
+    connected_client.calculate_operations(["op1"], only_not_calculated=True)
+    fake_com.CalculateOperations.assert_called_once_with(["op1"], True)
+
+
+# ---------------------------------------------------------------------------
+# calculate_single_operation()
+# ---------------------------------------------------------------------------
+
+
+def test_calculate_single_operation_calls_com(
+    connected_client: SolidCAMClient, fake_com: MagicMock
+) -> None:
+    connected_client.calculate_single_operation(5)
+    fake_com.CalculateSingleOperation.assert_called_once_with(5)
+
+
+def test_calculate_single_operation_raises_on_error(
+    connected_client: SolidCAMClient, fake_com: MagicMock
+) -> None:
+    fake_com.LastError = 1
+    with pytest.raises(SolidCAMAPIError):
+        connected_client.calculate_single_operation(5)
+
+
+# ---------------------------------------------------------------------------
+# change_post_processor_directory()
+# ---------------------------------------------------------------------------
+
+
+def test_change_post_processor_directory_calls_com(
+    connected_client: SolidCAMClient, fake_com: MagicMock
+) -> None:
+    connected_client.change_post_processor_directory(r"C:\posts")
+    fake_com.ChangePostProcessorDirectory.assert_called_once()
+
+
+def test_change_post_processor_directory_raises_on_error(
+    connected_client: SolidCAMClient, fake_com: MagicMock
+) -> None:
+    fake_com.LastError = 1
+    with pytest.raises(SolidCAMAPIError):
+        connected_client.change_post_processor_directory(r"C:\posts")
+
+
+# ---------------------------------------------------------------------------
 # generate_gcode()
 # ---------------------------------------------------------------------------
 
@@ -209,18 +291,18 @@ def test_save_calls_com_save_with_folder(
     fake_com.Save.assert_called_once_with(r"C:\out")
 
 
-def test_save_returns_string_result_from_com(
+def test_save_returns_path_result_from_com(
     connected_client: SolidCAMClient, fake_com: MagicMock
 ) -> None:
     fake_com.Save.return_value = r"C:\out\part.prz"
     result = connected_client.save(r"C:\out")
-    assert result == r"C:\out\part.prz"
+    assert result == Path(r"C:\out\part.prz")
 
 
-def test_save_returns_str_type(connected_client: SolidCAMClient, fake_com: MagicMock) -> None:
+def test_save_returns_path_type(connected_client: SolidCAMClient, fake_com: MagicMock) -> None:
     fake_com.Save.return_value = r"C:\out\part.prz"
     result = connected_client.save(r"C:\out")
-    assert isinstance(result, str)
+    assert isinstance(result, Path)
 
 
 def test_save_raises_api_error_when_com_returns_falsy(
@@ -253,6 +335,42 @@ def test_save_does_not_raise_when_com_returns_truthy_path(
 ) -> None:
     fake_com.Save.return_value = r"C:\result\part.prz"
     connected_client.save(r"C:\result")  # must not raise
+
+
+# ---------------------------------------------------------------------------
+# save_as()
+# ---------------------------------------------------------------------------
+
+
+def test_save_as_calls_com(connected_client: SolidCAMClient, fake_com: MagicMock) -> None:
+    fake_com.SaveAs.return_value = 1
+    connected_client.save_as(r"C:\out\part.prz")
+    fake_com.SaveAs.assert_called_once()
+
+
+def test_save_as_raises_on_error(connected_client: SolidCAMClient, fake_com: MagicMock) -> None:
+    fake_com.SaveAs.return_value = 0
+    with pytest.raises(SolidCAMAPIError):
+        connected_client.save_as(r"C:\out\part.prz")
+
+
+# ---------------------------------------------------------------------------
+# save_to_folder()
+# ---------------------------------------------------------------------------
+
+
+def test_save_to_folder_calls_com(connected_client: SolidCAMClient, fake_com: MagicMock) -> None:
+    fake_com.SaveToFolder.return_value = r"C:\out\part.prz"
+    result = connected_client.save_to_folder(r"C:\out")
+    assert isinstance(result, Path)
+
+
+def test_save_to_folder_raises_on_error(
+    connected_client: SolidCAMClient, fake_com: MagicMock
+) -> None:
+    fake_com.SaveToFolder.return_value = 0
+    with pytest.raises(SolidCAMAPIError):
+        connected_client.save_to_folder(r"C:\out")
 
 
 # ---------------------------------------------------------------------------
@@ -327,3 +445,38 @@ def test_exit_error_includes_description(
     with pytest.raises(SolidCAMAPIError) as exc_info:
         connected_client.exit()
     assert exc_info.value.description == "exit blocked"
+
+
+# ---------------------------------------------------------------------------
+# open_part() context manager
+# ---------------------------------------------------------------------------
+
+
+def test_open_part_opens_and_closes_on_success(
+    connected_client: SolidCAMClient, fake_com: MagicMock
+) -> None:
+    fake_com.Open.return_value = 1
+    fake_com.LastError = 0
+    with connected_client.open_part("part.prz"):
+        pass
+    fake_com.Open.assert_called_once()
+    fake_com.Close.assert_called_once()
+
+
+def test_open_part_closes_on_exception(
+    connected_client: SolidCAMClient, fake_com: MagicMock
+) -> None:
+    fake_com.Open.return_value = 1
+    fake_com.LastError = 0
+    with pytest.raises(ValueError):
+        with connected_client.open_part("part.prz"):
+            raise ValueError("test error")
+    fake_com.Close.assert_called_once()
+
+
+def test_open_part_with_model_path(connected_client: SolidCAMClient, fake_com: MagicMock) -> None:
+    fake_com.Open.return_value = 1
+    fake_com.LastError = 0
+    with connected_client.open_part("part.prz", "model.sldprt"):
+        pass
+    fake_com.Open.assert_called_once_with("part.prz", "model.sldprt")

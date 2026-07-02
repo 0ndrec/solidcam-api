@@ -1,4 +1,4 @@
-"""Main SolidCAM client — assembles all section mixins into a single object.
+r"""Main SolidCAM client — assembles all section mixins into a single object.
 
 The underlying COM object is created *lazily* inside :meth:`SolidCAMClient.connect`
 (or on ``__enter__``), so the module can be safely imported on any platform
@@ -9,7 +9,7 @@ Platform and dependency checks only fire when a connection is actually attempted
 from __future__ import annotations
 
 from types import TracebackType
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 from solidcam_api.sections.cad import CADSection
 from solidcam_api.sections.cam import CAMSection
@@ -20,6 +20,9 @@ from solidcam_api.sections.operation import OperationSection
 from solidcam_api.sections.part import PartSection
 from solidcam_api.sections.template import TemplateSection
 from solidcam_api.sections.tool import ToolSection
+
+if TYPE_CHECKING:
+    pass
 
 __all__ = ["SolidCAMClient"]
 
@@ -37,7 +40,7 @@ class SolidCAMClient(
     GeometrySection,
     TemplateSection,
 ):
-    """High-level Python client for the SolidCAM Automation COM API.
+    r"""High-level Python client for the SolidCAM Automation COM API.
 
     :class:`SolidCAMClient` composes all API sections — General, CAD, CAM,
     Machine, Part, Operation, Tool, Geometry, and Templates — into a single
@@ -53,8 +56,8 @@ class SolidCAMClient(
     Typical usage — context manager (recommended)::
 
         with SolidCAMClient() as sc:
-            sc.start_application(r"C:\\Program Files\\SolidWorks\\SLDWORKS.exe")
-            sc.open(r"C:\\parts\\my_part.prz")
+            sc.start_application(r"C:\Program Files\SolidWorks\SLDWORKS.exe")
+            sc.open(r"C:\parts\my_part.prz")
             sc.calculate()
             sc.generate_gcode()
             sc.close()
@@ -64,7 +67,7 @@ class SolidCAMClient(
         sc = SolidCAMClient()
         sc.connect()
         try:
-            sc.open(r"C:\\parts\\my_part.prz")
+            sc.open(r"C:\parts\my_part.prz")
             sc.calculate()
             sc.generate_gcode()
         finally:
@@ -89,13 +92,14 @@ class SolidCAMClient(
         ~solidcam_api.exceptions.SolidCAMConnectionError: From :meth:`connect`
             when the COM object cannot be created (e.g. ``scautom.dll`` not
             registered).
+
     """
 
     def __init__(
         self,
         prog_id: str = _PROG_ID,
         *,
-        com_object: Any = None,
+        com_object: Any = None,  # noqa: ANN401
     ) -> None:
         """Initialise the client without connecting to the COM object.
 
@@ -111,6 +115,7 @@ class SolidCAMClient(
                 instead of calling ``win32com.client.Dispatch``.  When supplied
                 the client is considered connected immediately and :meth:`connect`
                 becomes a no-op.
+
         """
         self.prog_id: str = prog_id
         self._com: Any = com_object  # None until connect(); or injected directly
@@ -133,6 +138,7 @@ class SolidCAMClient(
                 ``win32com.client.Dispatch`` raises any exception — typically
                 because ``scautom.dll`` is not registered or SolidCAM is not
                 installed.
+
         """
         if self._com is not None:
             return
@@ -180,6 +186,7 @@ class SolidCAMClient(
             ImportError: Propagated from :meth:`connect`.
             ~solidcam_api.exceptions.SolidCAMConnectionError: Propagated from
                 :meth:`connect`.
+
         """
         self.connect()
         return self
@@ -203,5 +210,6 @@ class SolidCAMClient(
     # ------------------------------------------------------------------
 
     def __repr__(self) -> str:
+        """Return a developer-friendly string representation of the client."""
         state = "connected" if self.is_connected else "disconnected"
         return f"SolidCAMClient(prog_id={self.prog_id!r}, state={state!r})"

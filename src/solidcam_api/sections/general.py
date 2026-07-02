@@ -4,10 +4,11 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
+from solidcam_api._paths import StrPath, as_str
+from solidcam_api.sections._base import _SectionBase
+
 if TYPE_CHECKING:
     pass
-
-from solidcam_api.sections._base import _SectionBase
 
 
 class GeneralSection(_SectionBase):
@@ -32,6 +33,7 @@ class GeneralSection(_SectionBase):
 
         Returns:
             Integer error code; ``0`` indicates no error.
+
         """
         return int(self._com.LastError or 0)
 
@@ -41,6 +43,7 @@ class GeneralSection(_SectionBase):
 
         Returns:
             Error description string, or an empty string when there is no error.
+
         """
         return str(self._com.LastErrorDescription or "")
 
@@ -56,37 +59,29 @@ class GeneralSection(_SectionBase):
 
         Returns:
             Absolute path to the current log file as a string.
+
         """
         return str(self._com.LogFile or "")
 
     @log_file.setter
-    def log_file(self, value: str) -> None:
+    def log_file(self, value: StrPath) -> None:
         """Set the path to the SolidCAM automation log file.
 
         Args:
             value: Absolute path to the desired log file location.
+
         """
-        self._com.LogFile = value
+        self._com.LogFile = as_str(value)
 
     @property
-    def pid(self) -> float:
+    def pid(self) -> int:
         """Process ID of the hosted CAD application.
 
-        The COM API exposes this as a floating-point value.
-
         Returns:
-            PID of the running CAD host process.
-        """
-        return float(self._com.pid or 0)
+            PID of the running CAD host process as an integer.
 
-    @pid.setter
-    def pid(self, value: float) -> None:
-        """Set the process ID of the hosted CAD application.
-
-        Args:
-            value: PID to assign.
         """
-        self._com.pid = value
+        return int(self._com.pid or 0)
 
     # ------------------------------------------------------------------
     # Methods
@@ -100,10 +95,11 @@ class GeneralSection(_SectionBase):
 
         Returns:
             ``True`` if SolidCAM is running, ``False`` otherwise.
+
         """
         return bool(self._com.IsSolidCamRunning())
 
-    def start_application(self, path: str, wait_for_plugin: int = 0) -> None:
+    def start_application(self, path: StrPath, *, wait_for_plugin: int = 0) -> None:
         """Start a host CAD application or the standalone SolidCAM executable.
 
         Passing an empty string for *path* with the SolidCAM plugin already
@@ -122,8 +118,9 @@ class GeneralSection(_SectionBase):
         Raises:
             SolidCAMAPIError: When the COM call returns a falsy result,
                 indicating that the application could not be started.
+
         """
-        result = self._com.StartApplication(path, wait_for_plugin)
+        result = self._com.StartApplication(as_str(path), wait_for_plugin)
         self._require_result(result, "StartApplication")
 
     def start_solidcam(self) -> None:
@@ -136,6 +133,7 @@ class GeneralSection(_SectionBase):
         Raises:
             SolidCAMAPIError: When the COM call returns a falsy result,
                 indicating that SolidCAM could not be started.
+
         """
         result = self._com.StartSolidCAM()
         self._require_result(result, "StartSolidCAM")

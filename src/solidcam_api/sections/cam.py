@@ -2,12 +2,16 @@
 
 from __future__ import annotations
 
+from collections.abc import Iterator
+from contextlib import contextmanager
+from pathlib import Path
 from typing import TYPE_CHECKING
+
+from solidcam_api._paths import StrPath, as_str
+from solidcam_api.sections._base import _SectionBase
 
 if TYPE_CHECKING:
     pass
-
-from solidcam_api.sections._base import _SectionBase
 
 
 class CAMSection(_SectionBase):
@@ -26,7 +30,7 @@ class CAMSection(_SectionBase):
     # Open / close
     # ------------------------------------------------------------------
 
-    def open(self, part_path: str, model_path: str = "") -> None:
+    def open(self, part_path: StrPath, model_path: StrPath = "") -> None:
         """Open a SolidCAM part file, optionally replacing its reference model.
 
         Loads the ``.prz`` project at *part_path* into SolidCAM. When *model_path*
@@ -43,8 +47,9 @@ class CAMSection(_SectionBase):
         Raises:
             SolidCAMAPIError: When the COM call returns a falsy result,
                 indicating that the part could not be opened.
+
         """
-        result = self._com.Open(part_path, model_path)
+        result = self._com.Open(as_str(part_path), as_str(model_path))
         self._require_result(result, "Open")
 
     def close(self) -> None:
@@ -56,6 +61,7 @@ class CAMSection(_SectionBase):
         Raises:
             SolidCAMAPIError: When the COM API reports a non-zero ``LastError``
                 after the call.
+
         """
         self._com.Close()
         self._raise_on_error("Close")
@@ -69,6 +75,7 @@ class CAMSection(_SectionBase):
         Raises:
             SolidCAMAPIError: When the COM API reports a non-zero ``LastError``
                 after the call.
+
         """
         self._com.Exit()
         self._raise_on_error("Exit")
@@ -88,6 +95,7 @@ class CAMSection(_SectionBase):
         Raises:
             SolidCAMAPIError: When the COM API reports a non-zero ``LastError``
                 after the call.
+
         """
         self._com.CheckSynchronization()
         self._raise_on_error("CheckSynchronization")
@@ -101,6 +109,7 @@ class CAMSection(_SectionBase):
         Raises:
             SolidCAMAPIError: When the COM API reports a non-zero ``LastError``
                 after the call.
+
         """
         self._com.Synchronize()
         self._raise_on_error("Synchronize")
@@ -109,7 +118,7 @@ class CAMSection(_SectionBase):
     # Calculation
     # ------------------------------------------------------------------
 
-    def calculate(self, only_not_calculated: bool = False) -> None:
+    def calculate(self, *, only_not_calculated: bool = False) -> None:
         """Calculate toolpaths for all operations in the open part.
 
         Args:
@@ -120,6 +129,7 @@ class CAMSection(_SectionBase):
         Raises:
             SolidCAMAPIError: When the COM API reports a non-zero ``LastError``
                 after the call.
+
         """
         self._com.Calculate(only_not_calculated)
         self._raise_on_error("Calculate")
@@ -127,6 +137,7 @@ class CAMSection(_SectionBase):
     def calculate_operations(
         self,
         operations: list[str],
+        *,
         only_not_calculated: bool = False,
     ) -> None:
         """Calculate toolpaths for a named subset of operations.
@@ -140,6 +151,7 @@ class CAMSection(_SectionBase):
         Raises:
             SolidCAMAPIError: When the COM API reports a non-zero ``LastError``
                 after the call.
+
         """
         self._com.CalculateOperations(operations, only_not_calculated)
         self._raise_on_error("CalculateOperations")
@@ -154,6 +166,7 @@ class CAMSection(_SectionBase):
         Raises:
             SolidCAMAPIError: When the COM API reports a non-zero ``LastError``
                 after the call.
+
         """
         self._com.CalculateSingleOperation(number)
         self._raise_on_error("CalculateSingleOperation")
@@ -162,7 +175,7 @@ class CAMSection(_SectionBase):
     # Post-processing / G-code
     # ------------------------------------------------------------------
 
-    def change_post_processor_directory(self, path: str) -> None:
+    def change_post_processor_directory(self, path: StrPath) -> None:
         """Override the directory from which SolidCAM loads post-processor files.
 
         Useful in automated environments where post-processor files reside in a
@@ -175,8 +188,9 @@ class CAMSection(_SectionBase):
         Raises:
             SolidCAMAPIError: When the COM API reports a non-zero ``LastError``
                 after the call.
+
         """
-        self._com.ChangePostProcessorDirectory(path)
+        self._com.ChangePostProcessorDirectory(as_str(path))
         self._raise_on_error("ChangePostProcessorDirectory")
 
     def generate_gcode(self) -> None:
@@ -190,6 +204,7 @@ class CAMSection(_SectionBase):
         Raises:
             SolidCAMAPIError: When the COM API reports a non-zero ``LastError``
                 after the call.
+
         """
         self._com.GenerateGCode()
         self._raise_on_error("GenerateGCode")
@@ -198,7 +213,7 @@ class CAMSection(_SectionBase):
     # Save
     # ------------------------------------------------------------------
 
-    def save(self, folder: str) -> str:
+    def save(self, folder: StrPath) -> Path:
         """Save the open part to *folder* and return the resulting file path.
 
         SolidCAM derives the filename from the part name and writes the
@@ -216,12 +231,13 @@ class CAMSection(_SectionBase):
         Raises:
             SolidCAMAPIError: When the COM call returns a falsy result,
                 indicating that the save operation failed.
-        """
-        result = self._com.Save(folder)
-        self._require_result(result, "Save")
-        return str(result)
 
-    def save_as(self, path: str) -> None:
+        """
+        result = self._com.Save(as_str(folder))
+        self._require_result(result, "Save")
+        return Path(str(result))
+
+    def save_as(self, path: StrPath) -> None:
         """Save the open part to an explicit file path.
 
         Unlike :meth:`save`, the caller supplies the complete destination path
@@ -235,11 +251,12 @@ class CAMSection(_SectionBase):
         Raises:
             SolidCAMAPIError: When the COM call returns a falsy result,
                 indicating that the save operation failed.
+
         """
-        result = self._com.SaveAs(path)
+        result = self._com.SaveAs(as_str(path))
         self._require_result(result, "SaveAs")
 
-    def save_to_folder(self, folder: str) -> str:
+    def save_to_folder(self, folder: StrPath) -> Path:
         """Save the open part into *folder*, mirroring the source directory structure.
 
         Similar to :meth:`save`, but SolidCAM may replicate the original part's
@@ -255,7 +272,51 @@ class CAMSection(_SectionBase):
         Raises:
             SolidCAMAPIError: When the COM call returns a falsy result,
                 indicating that the save operation failed.
+
         """
-        result = self._com.SaveToFolder(folder)
+        result = self._com.SaveToFolder(as_str(folder))
         self._require_result(result, "SaveToFolder")
-        return str(result)
+        return Path(str(result))
+
+    # ------------------------------------------------------------------
+    # Context manager for part lifecycle
+    # ------------------------------------------------------------------
+
+    @contextmanager
+    def open_part(self, part_path: StrPath, model_path: StrPath = "") -> Iterator[None]:
+        r"""Open a SolidCAM part and guarantee it is closed on exit.
+
+        This context manager ensures that :meth:`close` is called even if an
+        exception is raised inside the block, preventing orphaned open parts.
+
+        Args:
+            part_path: Absolute path to the SolidCAM project file (``.prz``).
+            model_path: Absolute path to a replacement CAD model file.
+                Pass an empty string (the default) to keep the existing
+                reference model.
+
+        Yields:
+            ``None`` — the part is opened before entering the block.
+
+        Raises:
+            SolidCAMAPIError: When the part cannot be opened.
+
+        Example:
+            ```python
+            with SolidCAMClient() as sc:
+                sc.start_application(SW_EXE)
+                with sc.open_part(r"D:\jobs\bracket.prz"):
+                    sc.calculate()
+                    sc.generate_gcode()
+                # Part is closed even if calculate() raised
+            ```
+
+        """
+        self.open(part_path, model_path)
+        try:
+            yield
+        finally:
+            try:
+                self.close()
+            except Exception:
+                pass  # pragma: no cover

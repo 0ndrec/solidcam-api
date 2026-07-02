@@ -10,6 +10,7 @@ class TemplateEntry:
     Attributes:
         index: Zero-based position of the template in the template list.
         name:  Display name of the template as reported by SolidCAM.
+
     """
 
     index: int
@@ -26,6 +27,7 @@ class ProcessTemplateEntry:
     Attributes:
         index: Zero-based position of the process template in the list.
         name:  Display name of the process template as reported by SolidCAM.
+
     """
 
     index: int

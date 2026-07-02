@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-from solidcam_api.enums import ToolType
 from solidcam_api.models import Tool
 from solidcam_api.sections._base import _SectionBase
 
@@ -31,6 +30,7 @@ class ToolSection(_SectionBase):
         Returns:
             Non-negative integer count of tool entries present in the part's
             tool library.
+
         """
         return int(self._com.ToolCount)
 
@@ -41,6 +41,7 @@ class ToolSection(_SectionBase):
         Returns:
             Non-negative integer count of tool-sheet template entries (e.g.
             ``Sheet_Full_HTML``, ``Sheet_Full_RTF``) known to SolidCAM.
+
         """
         return int(self._com.ToolSheetCount)
 
@@ -57,6 +58,7 @@ class ToolSection(_SectionBase):
 
         Returns:
             Display name of the tool as shown in SolidCAM.
+
         """
         return str(self._com.GetToolName(index))
 
@@ -76,6 +78,7 @@ class ToolSection(_SectionBase):
 
         Returns:
             Raw integer tool-type code as returned by the COM API.
+
         """
         return int(self._com.GetToolType(index))
 
@@ -107,6 +110,7 @@ class ToolSection(_SectionBase):
         Raises:
             SolidCAMAPIError: When the COM API reports a non-zero
                 ``LastError`` after the call.
+
         """
         tag = int(self._com.GetToolTag(number, position, station, turret))
         self._raise_on_error("GetToolTag")
@@ -126,6 +130,7 @@ class ToolSection(_SectionBase):
         Returns:
             :class:`~solidcam_api.models.Tool` instance with ``index``,
             ``name``, and ``type_code`` populated.
+
         """
         return Tool(
             index=index,
@@ -144,6 +149,7 @@ class ToolSection(_SectionBase):
             Ordered list of :class:`~solidcam_api.models.Tool` instances,
             one per tool in the part's tool library, sorted by their
             zero-based index.
+
         """
         return [self.get_tool(i) for i in range(self.tool_count)]
 
@@ -167,6 +173,7 @@ class ToolSection(_SectionBase):
         Raises:
             SolidCAMAPIError: When the COM API reports a non-zero
                 ``LastError`` after the call.
+
         """
         self._com.SetOperationTool(operation_name, tool_tag)
         self._raise_on_error("SetOperationTool")
@@ -187,6 +194,7 @@ class ToolSection(_SectionBase):
         Raises:
             SolidCAMAPIError: When the COM API reports a non-zero
                 ``LastError`` after the call.
+
         """
         tag = int(self._com.GetOperationToolTag(operation_name))
         self._raise_on_error("GetOperationToolTag")
@@ -208,6 +216,7 @@ class ToolSection(_SectionBase):
 
         Returns:
             Template name string as known to SolidCAM.
+
         """
         return str(self._com.GetToolSheetName(index))
 
@@ -219,6 +228,7 @@ class ToolSection(_SectionBase):
 
         Returns:
             Ordered list of template name strings.
+
         """
         return [self.get_tool_sheet_name(i) for i in range(self.tool_sheet_count)]
 
@@ -237,6 +247,7 @@ class ToolSection(_SectionBase):
         Raises:
             SolidCAMAPIError: When the COM API reports a non-zero
                 ``LastError`` after the call.
+
         """
         self._com.GenerateToolSheet(template_name)
         self._raise_on_error("GenerateToolSheet")

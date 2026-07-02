@@ -1,4 +1,4 @@
-"""solidcam-api — Python middleware for the SolidCAM Automation COM API.
+r"""solidcam-api — Python middleware for the SolidCAM Automation COM API.
 
 This package provides a fully-typed, Pythonic interface to the SolidCAM
 Automation API (``scautom.dll``), a Windows COM component that ships with
@@ -13,8 +13,8 @@ Typical usage
     from solidcam_api import SolidCAMClient
 
     with SolidCAMClient() as sc:
-        sc.start_application(r"C:\\Program Files\\SolidWorks\\SLDWORKS.exe")
-        sc.open(r"C:\\parts\\my_part.prz")
+        sc.start_application(r"C:\Program Files\SolidWorks\SLDWORKS.exe")
+        sc.open(r"C:\parts\my_part.prz")
         sc.synchronize()
         sc.calculate()
         sc.generate_gcode()
@@ -57,24 +57,9 @@ Exceptions (``solidcam_api.exceptions``)
 
 from __future__ import annotations
 
-# ---------------------------------------------------------------------------
-# Package metadata
-# ---------------------------------------------------------------------------
-
-__version__: str = "0.1.0"
-__author__: str = "0ndrec"
-__email__: str = "byeexs@gmail.com"
-__license__: str = "MIT"
-
-# ---------------------------------------------------------------------------
-# Client
-# ---------------------------------------------------------------------------
+import logging
 
 from solidcam_api.client import SolidCAMClient
-
-# ---------------------------------------------------------------------------
-# Enumerations
-# ---------------------------------------------------------------------------
 from solidcam_api.enums import (
     HomeOriginPosition,
     NewPartType,
@@ -86,10 +71,6 @@ from solidcam_api.enums import (
     WireCutOperationType,
     try_parse_operation_type,
 )
-
-# ---------------------------------------------------------------------------
-# Exceptions
-# ---------------------------------------------------------------------------
 from solidcam_api.exceptions import (
     SolidCAMAPIError,
     SolidCAMConnectionError,
@@ -97,10 +78,6 @@ from solidcam_api.exceptions import (
     SolidCAMNotOpenError,
     SolidCAMNotRunningError,
 )
-
-# ---------------------------------------------------------------------------
-# Data models
-# ---------------------------------------------------------------------------
 from solidcam_api.models import (
     CoordSys,
     GeomEntry,
@@ -111,6 +88,24 @@ from solidcam_api.models import (
     TemplateEntry,
     Tool,
 )
+
+# ---------------------------------------------------------------------------
+# Package metadata
+# ---------------------------------------------------------------------------
+
+try:
+    from importlib.metadata import version as _pkg_version
+
+    __version__: str = _pkg_version("solidcam-api")
+except Exception:  # pragma: no cover — not installed as package
+    __version__ = "0.0.0.dev0"
+
+__author__: str = "0ndrec"
+__email__: str = "byeexs@gmail.com"
+__license__: str = "MIT"
+
+# NullHandler so library users can configure logging as they wish
+logging.getLogger("solidcam_api").addHandler(logging.NullHandler())
 
 # ---------------------------------------------------------------------------
 # Public API

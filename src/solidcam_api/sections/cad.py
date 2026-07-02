@@ -4,10 +4,11 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
+from solidcam_api._paths import StrPath, as_str
+from solidcam_api.sections._base import _SectionBase
+
 if TYPE_CHECKING:
     pass
-
-from solidcam_api.sections._base import _SectionBase
 
 
 class CADSection(_SectionBase):
@@ -34,6 +35,7 @@ class CADSection(_SectionBase):
             ``True`` if the active document is a SolidCAM part, ``False``
             otherwise (e.g. the active document is a plain CAD assembly or
             drawing, or no document is open).
+
         """
         return bool(self._com.IsActiveDocCamPart)
 
@@ -41,7 +43,7 @@ class CADSection(_SectionBase):
     # Methods
     # ------------------------------------------------------------------
 
-    def open_host_file(self, path: str) -> None:
+    def open_host_file(self, path: StrPath) -> None:
         """Open a file in the CAD host application.
 
         Instructs the running CAD host to open the document at *path*. The
@@ -54,11 +56,12 @@ class CADSection(_SectionBase):
         Raises:
             SolidCAMAPIError: When the COM API reports a non-zero ``LastError``
                 after the call, indicating that the file could not be opened.
+
         """
-        self._com.OpenHostFile(path)
+        self._com.OpenHostFile(as_str(path))
         self._raise_on_error("OpenHostFile")
 
-    def render_preview(self, path: str) -> None:
+    def render_preview(self, path: StrPath) -> None:
         """Generate a preview image of the active document via the CAD host.
 
         Invokes the CAD host to render and save a preview image to *path*.
@@ -74,6 +77,7 @@ class CADSection(_SectionBase):
             SolidCAMAPIError: When the COM API reports a non-zero ``LastError``
                 after the call, indicating that the preview could not be
                 generated.
+
         """
-        self._com.RenderPreview(path)
+        self._com.RenderPreview(as_str(path))
         self._raise_on_error("RenderPreview")

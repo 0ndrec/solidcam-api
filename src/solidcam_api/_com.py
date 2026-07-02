@@ -32,6 +32,7 @@ def ensure_windows() -> None:
 
     Raises:
         OSError: Always raised on non-Windows platforms.
+
     """
     if sys.platform != "win32":
         raise OSError(
@@ -81,11 +82,12 @@ def create_com_object(prog_id: str = SOLIDCAM_PROG_ID) -> object:
         ~solidcam_api.exceptions.SolidCAMConnectionError: When the COM object
             cannot be created (DLL not registered, SolidCAM not installed, or
             a COM initialisation error).
+
     """
     ensure_windows()
 
     try:
-        import win32com.client  # type: ignore[import]
+        import win32com.client  # type: ignore[import-untyped]
     except ImportError as exc:
         raise ImportError(
             "pywin32 is required by solidcam-api but is not installed.  "

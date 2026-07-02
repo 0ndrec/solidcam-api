@@ -190,6 +190,7 @@ def try_parse_operation_type(code: int) -> OperationType | int:
     Returns:
         The matching :class:`OperationType` member when the code is recognised,
         otherwise the original ``int`` value unchanged.
+
     """
     try:
         return OperationType(code)

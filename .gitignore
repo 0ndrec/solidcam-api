@@ -8,3 +8,8 @@ wheels/
 
 # Virtual environments
 .venv
+
+# Coverage reports
+.coverage
+coverage.xml
+htmlcov/

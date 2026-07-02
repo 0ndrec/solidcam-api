@@ -13,6 +13,7 @@ class Tool:
         index: Zero-based position of the tool in the part's tool list.
         name: Display name of the tool as shown in SolidCAM.
         type_code: Raw integer tool-type code returned by the COM API.
+
     """
 
     index: int

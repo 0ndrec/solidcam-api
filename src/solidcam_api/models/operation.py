@@ -13,6 +13,7 @@ class Operation:
         index:     Zero-based position of the operation in the operations list.
         name:      Display name of the operation as shown in the SolidCAM tree.
         type_code: Raw integer type code returned by the COM API.
+
     """
 
     index: int

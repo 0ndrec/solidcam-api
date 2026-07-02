@@ -37,6 +37,7 @@ class GeometrySection(_SectionBase):
 
         Returns:
             Non-negative integer count of CAD coordinate system entries.
+
         """
         return int(self._com.CADCoordSysCount)
 
@@ -49,6 +50,7 @@ class GeometrySection(_SectionBase):
 
         Returns:
             Name of the CAD coordinate system as reported by the COM API.
+
         """
         return str(self._com.GetCADCoordSysName(index))
 
@@ -62,6 +64,7 @@ class GeometrySection(_SectionBase):
         Returns:
             :class:`~solidcam_api.models.CoordSys` instance with ``index``
             and ``name`` populated.
+
         """
         return CoordSys(index=index, name=self.get_cad_coord_sys_name(index))
 
@@ -71,6 +74,7 @@ class GeometrySection(_SectionBase):
         Returns:
             Ordered list of :class:`~solidcam_api.models.CoordSys` instances
             sorted by zero-based index.
+
         """
         return [self.get_cad_coord_sys(i) for i in range(self.cad_coord_sys_count)]
 
@@ -84,6 +88,7 @@ class GeometrySection(_SectionBase):
 
         Returns:
             Non-negative integer count of home / work-offset entries.
+
         """
         return int(self._com.HomeCount)
 
@@ -96,6 +101,7 @@ class GeometrySection(_SectionBase):
 
         Returns:
             Name of the home position as reported by the COM API.
+
         """
         return str(self._com.GetHomeName(index))
 
@@ -109,6 +115,7 @@ class GeometrySection(_SectionBase):
         Returns:
             :class:`~solidcam_api.models.HomeEntry` instance with ``index``
             and ``name`` populated.
+
         """
         return HomeEntry(index=index, name=self.get_home_name(index))
 
@@ -118,6 +125,7 @@ class GeometrySection(_SectionBase):
         Returns:
             Ordered list of :class:`~solidcam_api.models.HomeEntry` instances
             sorted by zero-based index.
+
         """
         return [self.get_home(i) for i in range(self.home_count)]
 
@@ -131,6 +139,7 @@ class GeometrySection(_SectionBase):
 
         Raises:
             SolidCAMAPIError: If the COM API reports a non-zero ``LastError``.
+
         """
         self._com.CreateHome(int(home_origin_position))
         self._raise_on_error("CreateHome")
@@ -145,6 +154,7 @@ class GeometrySection(_SectionBase):
         Raises:
             SolidCAMAPIError: If the COM API reports a non-zero ``LastError``
                 or the operation returns a falsy result.
+
         """
         result = self._com.CreateHomeByCAD(cad_home_name)
         self._require_result(result, "CreateHomeByCAD")
@@ -162,6 +172,7 @@ class GeometrySection(_SectionBase):
 
         Returns:
             Non-negative integer count of geometry entries.
+
         """
         return int(self._com.GeomCount)
 
@@ -174,6 +185,7 @@ class GeometrySection(_SectionBase):
 
         Returns:
             Name of the geometry entry as reported by the COM API.
+
         """
         return str(self._com.GetGeomName(index))
 
@@ -187,6 +199,7 @@ class GeometrySection(_SectionBase):
         Returns:
             :class:`~solidcam_api.models.GeomEntry` instance with ``index``
             and ``name`` populated.
+
         """
         return GeomEntry(index=index, name=self.get_geom_name(index))
 
@@ -196,6 +209,7 @@ class GeometrySection(_SectionBase):
         Returns:
             Ordered list of :class:`~solidcam_api.models.GeomEntry` instances
             sorted by zero-based index.
+
         """
         return [self.get_geom(i) for i in range(self.geom_count)]
 
@@ -235,6 +249,7 @@ class GeometrySection(_SectionBase):
         Raises:
             SolidCAMAPIError: If the COM API returns a falsy result or reports
                 a non-zero ``LastError``.
+
         """
         result = self._com.CreateTarget(
             name,
@@ -293,6 +308,7 @@ class GeometrySection(_SectionBase):
         Raises:
             SolidCAMAPIError: If the COM API returns a falsy result or reports
                 a non-zero ``LastError``.
+
         """
         result = self._com.CreateStockBox(
             name,
@@ -352,6 +368,7 @@ class GeometrySection(_SectionBase):
         Raises:
             SolidCAMAPIError: If the COM API returns a falsy result or reports
                 a non-zero ``LastError``.
+
         """
         result = self._com.CreateStockCylinder(
             name,

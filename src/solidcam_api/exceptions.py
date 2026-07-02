@@ -25,6 +25,7 @@ class SolidCAMAPIError(SolidCAMError):
     description: str
 
     def __init__(self, method: str, code: int, description: str) -> None:
+        """Initialize the exception with method name, error code, and description."""
         self.method = method
         self.code = code
         self.description = description
